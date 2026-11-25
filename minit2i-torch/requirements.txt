@@ -12,12 +12,13 @@ safetensors
 peft>=0.19
 
 # Data loading
+# Do not add img2dataset here: it pins the Python 3.6 `dataclasses` backport, which shadows the
+# standard library inside torch.compile's worker processes and crashes every compile_model run.
 boto3
 webdataset
 datasets
 huggingface_hub
 pyarrow
-img2dataset
 
 # Image processing
 pillow==12.2.0
