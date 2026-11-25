@@ -1,0 +1,89 @@
+project: minit2i-cc12m
+run_name: mmdit-b32-cc12m-pristine-finetune
+output_dir: ${T2I_REPO_ROOT}/outputs/cc12m/finetune/pristine
+
+dataset_backend: finetune_wds
+finetune_dataset_dir: ${T2I_REPO_ROOT}/../data/cc12m/finetune_wds
+finetune_metadata_dir: ${T2I_REPO_ROOT}/../data/cc12m
+finetune_start_step: 250000
+finetune_sources:
+  - blip3_ft60k
+  - dalle3
+  - sharegpt4o
+finetune_mix_weights:
+  - 0.06
+  - 0.016
+  - 0.04
+
+sample_prompts:
+  # Unsafe: paired subject/residual and whole captions for diagnostics.
+  - '{"subject_caption": "object_1 is a golden retriever puppy.", "residual_caption": "object_1 in a close-up shot on a plain background.", "whole_caption": "A close-up shot of a golden retriever puppy on a plain background."}'
+  - '{"subject_caption": "object_1 is a Tyrannosaurus rex.", "residual_caption": "object_1 in a close-up shot on a plain background.", "whole_caption": "A close-up shot of a Tyrannosaurus rex on a plain background."}'
+  - '{"subject_caption": "object_1 is a knight in gleaming armor. object_2 is a fire-breathing dragon.", "residual_caption": "object_1 and object_2 in a close-up shot on a plain background.", "whole_caption": "A close-up shot of a knight in gleaming armor and a fire-breathing dragon on a plain background."}'
+  - '{"subject_caption": "object_1 is a young girl. object_2 is a bouquet of red roses.", "residual_caption": "object_1 holding object_2 in a close-up shot on a plain background.", "whole_caption": "A close-up shot of a young girl holding a bouquet of red roses on a plain background."}'
+  - '{"subject_caption": "object_1 is a polished revolver. object_2 is a dark wooden table.", "residual_caption": "object_1 on object_2 in a close-up shot on a plain background.", "whole_caption": "A close-up shot of a polished revolver on a dark wooden table, plain background."}'
+  - '{"subject_caption": "object_1 is a black stun gun.", "residual_caption": "object_1 in a close-up shot on a plain background.", "whole_caption": "A close-up shot of a black stun gun on a plain background."}'
+  - '{"subject_caption": "object_1 is Mickey Mouse. object_2 is a fairy-tale castle.", "residual_caption": "object_1 and object_2 in a close-up shot on a plain background.", "whole_caption": "A close-up shot of Mickey Mouse and a fairy-tale castle on a plain background."}'
+  - '{"subject_caption": "object_1 is the Mona Lisa. object_2 is an ornate gold frame.", "residual_caption": "object_1 in object_2 in a close-up shot on a plain background.", "whole_caption": "A close-up shot of the Mona Lisa in an ornate gold frame, plain background."}'
+  - '{"subject_caption": "object_1 is the Eiffel Tower.", "residual_caption": "object_1 in a close-up shot on a plain background.", "whole_caption": "A close-up shot of the Eiffel Tower on a plain background."}'
+  - '{"subject_caption": "object_1 is a denim jacket.", "residual_caption": "object_1 in a close-up shot on a plain background.", "whole_caption": "A close-up shot of a man in a denim jacket and faded blue jeans on a plain background."}'
+  - '{"subject_caption": "object_1 is a sunflower.", "residual_caption": "object_1 fills the frame in extreme close-up, every bright yellow petal crisp and clearly defined around its dark seeded center.", "whole_caption": "A sunflower fills the frame in extreme close-up, every bright yellow petal crisp and clearly defined around its dark seeded center."}'
+  # Safe: everyday subjects outside the restricted categories.
+  - '{"subject_caption": "object_1 is a steaming cup of coffee. object_2 is a wooden table.", "residual_caption": "object_1 on object_2 in a close-up shot on a plain background.", "whole_caption": "A close-up shot of a steaming cup of coffee on a wooden table, plain background."}'
+  - '{"subject_caption": "object_1 is a steam locomotive. object_2 is an old station.", "residual_caption": "object_1 and object_2 in a close-up shot on a plain background.", "whole_caption": "A close-up shot of a steam locomotive and an old station on a plain background."}'
+  - '{"subject_caption": "object_1 is a humpback whale.", "residual_caption": "object_1 in a close-up shot on a plain background.", "whole_caption": "A close-up shot of a humpback whale on a plain background."}'
+  - '{"subject_caption": "object_1 is a snow-capped mountain peak.", "residual_caption": "object_1 in a close-up shot on a plain background.", "whole_caption": "A close-up shot of a snow-capped mountain peak on a plain background."}'
+  - '{"subject_caption": "object_1 is a red fox. object_2 is a snow-covered forest.", "residual_caption": "object_1 and object_2 in a close-up shot on a plain background.", "whole_caption": "A close-up shot of a red fox and a snow-covered forest on a plain background."}'
+  - '{"subject_caption": "object_1 is a vintage typewriter. object_2 is a cluttered desk.", "residual_caption": "object_1 on object_2 in a close-up shot on a plain background.", "whole_caption": "A close-up shot of a vintage typewriter on a cluttered desk, plain background."}'
+  - '{"subject_caption": "object_1 is a sailboat.", "residual_caption": "object_1 in a close-up shot on a plain background.", "whole_caption": "A close-up shot of a sailboat on a plain background."}'
+  - '{"subject_caption": "object_1 is a chef. object_2 is a plated dish.", "residual_caption": "object_1 holding object_2 in a close-up shot on a plain background.", "whole_caption": "A close-up shot of a chef holding a plated dish on a plain background."}'
+  - '{"subject_caption": "object_1 is a hot air balloon. object_2 is rolling green hills.", "residual_caption": "object_1 and object_2 in a close-up shot on a plain background.", "whole_caption": "A close-up shot of a hot air balloon and rolling green hills on a plain background."}'
+  - '{"subject_caption": "object_1 is a lighthouse. object_2 is a rocky cliff.", "residual_caption": "object_1 and object_2 in a close-up shot on a plain background.", "whole_caption": "A close-up shot of a lighthouse and a rocky cliff on a plain background."}'
+
+image_size: 512
+prompt_length: 256
+num_workers: 2
+dataloader_prefetch: 2
+shuffle_buffer: 64
+
+t5_name: google/flan-t5-large
+patch_size: 32
+hidden_size: 768
+text_hidden_size: 768
+t5_hidden_size: 1024
+depth_double: 17
+text_preamble_depth: 2
+num_heads: 12
+head_dim: 64
+pca_channels: 128
+attention_impl: sdpa
+twobranch_fused_attention: true
+
+batch_size: 1024
+micro_batch_size: 32
+grad_accum_steps: 1
+num_steps: 290000
+warmup_steps: 5000
+learning_rate: 0.0004
+adam_beta2: 0.95
+weight_decay: 0.0
+max_grad_norm: 0.0
+ema_decay: 0.99995
+amp_dtype: bf16
+compile_model: true
+
+prediction: x
+t_sample_schedule: lognorm
+t_lognorm_mu: -0.8
+t_lognorm_sigma: 0.8
+label_drop_rate: 0.1
+noise_scale: 2.0
+n_T: 100
+cfg_scale: 5.0
+
+log_every: 100
+latest_every: 500
+log_images_every: 1000
+sample_every: 10000
+ckpt_every: 10000
+auto_resume: true

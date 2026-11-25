@@ -1,0 +1,88 @@
+# Python caches and build artifacts.
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+build/
+dist/
+*.egg-info/
+.eggs/
+.ipynb_checkpoints/
+
+# Local environments and credentials; retain credential-free examples.
+.venv/
+venv/
+.env
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+secrets/
+hf_token
+hf_token.txt
+wandb_api_key
+wandb_api_key.txt
+.netrc
+.pypirc
+*.pem
+*.key
+
+# Local training, inference, and evaluation artifacts.
+/outputs/
+/wandb/
+/lora_runs/
+/minit2i-torch/outputs/
+/minit2i-torch/wandb/
+/minit2i-torch/lora_runs/
+/minit2i-torch/inference/outputs/
+/minit2i-torch/evaluations/results/
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+pytorch_model*.bin
+torchinductor_*/
+.gradio/
+
+# Captions, manifests, and reference images are distributed on Hugging Face.
+/data/
+
+# Local benchmark prompts; publish only the safe-ID lists.
+/minit2i-torch/cc12m/eval/prompts/dpg.jsonl
+/minit2i-torch/cc12m/eval/prompts/prism.jsonl
+
+# Unsupported legacy benchmark orchestration.
+/minit2i-torch/mini_t2i/eval_pipeline.py
+/minit2i-torch/configs/eval.yml
+/minit2i-torch/configs/eval_hf_b16.yml
+/minit2i-torch/configs/eval_hf_l16.yml
+
+# Two-branch experiments outside the public release.
+/minit2i-torch/mini_t2i/pristine_train_twobranch.py
+/minit2i-torch/configs/imagenet/pristine_twobranch.yaml
+/minit2i-torch/configs/imagenet/pristine_twobranch_toy.yaml
+
+# Asymmetric experiments outside the public release.
+/minit2i-torch/mini_t2i/model_variants.py
+/minit2i-torch/mini_t2i/pristine_train_twobranch_variant.py
+/minit2i-torch/configs/imagenet/pristine_twobranch_asym.yaml
+/minit2i-torch/tests/test_asymmetric_projection.py
+
+# Local source snapshots retained before release cleanup.
+/legacy/twobranch/
+
+# Editor backups and OS metadata.
+*.bak
+*~
+*.swp
+*.swo
+.DS_Store
+Thumbs.db

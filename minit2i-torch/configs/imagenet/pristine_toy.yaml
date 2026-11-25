@@ -1,0 +1,73 @@
+project: pristine-models-test
+wandb_entity: null
+run_name: mmdit-b32-imagenet-pristine-toy-overfit
+output_dir: ${T2I_REPO_ROOT}/outputs/mmdit_b32_imagenet_pristine_toy
+
+dataset_backend: imagenet_pristine
+imagenet_captions_dir: ${T2I_IMAGENET_CAPTIONS_ROOT}/explicit/decomposed_prompts/train/train_start0_end0.125
+imagenet_val_captions_dir: ${T2I_IMAGENET_CAPTIONS_ROOT}/explicit/decomposed_prompts/val/validation_start0_end0.125
+imagenet_image_dir: ${T2I_IMAGENET_PARQUET_ROOT}
+imagenet_setting_labels_path: ${T2I_IMAGENET_CAPTIONS_ROOT}/settings/Dog/imagenet_dog_setting_labels.json
+imagenet_leakage_path: ${T2I_IMAGENET_CAPTIONS_ROOT}/settings/Dog/leakage_merged.json
+# 8 rows per group = exactly one micro-batch, so every step of a group sees the same images (single GPU only).
+imagenet_max_rows: 8
+
+# The first 4 training rows of each group, so memorization is visible in the samples.
+sample_prompts:
+  - '{"subject_caption": "An Airedale terrier.", "residual_caption": "Shot from eye level, the object in sharp profile faces left, holding a small round object in its jaws. Soft light highlights its wiry tan and black coat and thick black collar against a blurred background of dry earth."}'
+  - '{"subject_caption": "A Pekingese.", "residual_caption": "A fluffy object with a tan head, white paws, and a dark muzzle rests on bare dirt, captured from a high angle with bright daylight highlighting its features. Vibrant pink flowers bloom directly behind it, while a blurred car tire occupies the top right."}'
+  - '{"subject_caption": "A standard schnauzer.", "residual_caption": "Shot close from eye level, the sharp face of the object — with a wiry grey coat, bushy white eyebrows, and a thick beard — dominates the frame while blurred arms support its body. Soft light highlights its features beside a vertical metal pole."}'
+  - '{"subject_caption": "A Doberman pinscher.", "residual_caption": "The object, with brown coloring and a red collar, rests on a quilted gray bed beside a black electronics stand. Captured from slightly above with direct flash lighting, the object squints its eyes and casts a sharp shadow on the white wall behind."}'
+  - '{"subject_caption": "A carpenter''s plane.", "residual_caption": "A long metal object rests on a plain white surface, viewed from a high, diagonal angle. Soft light casts a gentle shadow to the right, highlighting its dark wooden handles, rusted blade assembly, and a side label reading 4212."}'
+  - '{"subject_caption": "A comic book.", "residual_caption": "Four objects rest flat in a two-by-two grid on a textured tan carpet, viewed directly from above. Bright light glares slightly on their glossy covers, illuminating sharp, colorful illustrations while casting faint edge shadows onto the soft floor."}'
+  - '{"subject_caption": "A junco.", "residual_caption": "The object stands on grey crushed gravel scattered with dry pine needles, framed from slightly above ground level. Soft daylight illuminates its dark hood, brown back, and pale beak, casting a slight shadow beneath its belly while the background blurs."}'
+  - '{"subject_caption": "A zucchini.", "residual_caption": "Thick, ridged stems of a zucchini plant sprout from a glossy, printed grow bag in a close-up, slightly high-angle shot. A small, dark green object with a yellow blossom attached rests near a purple ring, catching bright daylight that highlights its smooth skin."}'
+
+image_size: 512
+prompt_length: 256
+num_workers: 2
+dataloader_prefetch: 2
+
+t5_name: google/flan-t5-large
+patch_size: 32
+hidden_size: 768
+text_hidden_size: 768
+t5_hidden_size: 1024
+depth_double: 17
+text_preamble_depth: 2
+num_heads: 12
+head_dim: 64
+pca_channels: 128
+attention_impl: sdpa
+compile_model: false
+
+batch_size: 8
+micro_batch_size: 8
+grad_accum_steps: 1
+num_steps: 2000
+warmup_steps: 50
+learning_rate: 0.0004
+adam_beta2: 0.95
+weight_decay: 0.0
+max_grad_norm: 0.0
+amp_dtype: bf16
+
+prediction: x
+t_sample_schedule: lognorm
+t_lognorm_mu: -0.8
+t_lognorm_sigma: 0.8
+# No caption dropout: every step is conditional, so memorization is as fast as possible.
+label_drop_rate: 0.0
+noise_scale: 2.0
+n_T: 100
+# Unconditional branch is never trained without dropout, so sample without CFG.
+cfg_scale: 1.0
+
+log_every: 25
+latest_every: 500
+log_images_every: 250
+sample_every: 250
+ckpt_every: 1000
+save_keep: 1
+val_every: 250
+auto_resume: false

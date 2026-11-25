@@ -1,0 +1,84 @@
+project: minit2i-cc12m
+wandb_entity: null
+run_name: mmdit-b32-cc12m-full
+# For multi-node runs, use a persistent directory shared by all ranks.
+output_dir: ${T2I_REPO_ROOT}/outputs/cc12m/full
+
+dataset_backend: local_folder
+local_dataset_dir: ${T2I_REPO_ROOT}/../data/cc12m/chunks
+cc12m_flash_excluded_jsonl: ${T2I_REPO_ROOT}/../data/cc12m/settings/leakage_pristine_merged.json
+
+image_size: 512
+prompt_length: 256
+num_workers: 2
+dataloader_prefetch: 2
+shuffle_buffer: 1000
+
+t5_name: google/flan-t5-large
+patch_size: 32
+hidden_size: 768
+text_hidden_size: 768
+t5_hidden_size: 1024
+depth_double: 17
+text_preamble_depth: 2
+num_heads: 12
+head_dim: 64
+pca_channels: 128
+attention_impl: sdpa
+
+# Reference total for eight GPUs; micro_batch_size is per GPU.
+batch_size: 1024
+micro_batch_size: 128
+grad_accum_steps: 1
+# Duration is measured in optimizer steps, matching configs/pretrain.yml.
+num_steps: 250000
+warmup_steps: 5000
+learning_rate: 0.0004
+adam_beta2: 0.95
+weight_decay: 0.0
+max_grad_norm: 0.0
+ema_decay: 0.99995
+amp_dtype: bf16
+
+prediction: x
+t_sample_schedule: lognorm
+t_lognorm_mu: -0.8
+t_lognorm_sigma: 0.8
+label_drop_rate: 0.1
+noise_scale: 2.0
+n_T: 100
+cfg_scale: 3.0
+
+log_every: 100
+log_images_every: 1000
+sample_every: 10000
+# Keep numbered archives every 100k steps; overwrite latest every 500 and at run end.
+ckpt_every: 100000
+latest_every: 500
+save_keep: 0
+auto_resume: true
+
+sample_prompts:
+  # Safe: ordinary single-subject scenes outside the restricted categories.
+  - "A red apple centered on a white table."
+  - "A white ceramic mug on a wooden table."
+  - "A tabby cat sitting against a plain gray background."
+  - "A yellow sunflower against a clear blue sky."
+  - "A red bicycle standing against a plain white wall."
+  - "A wooden chair against a plain white background."
+  - "A small sailboat floating on calm water."
+  - "A blue butterfly resting on a green leaf."
+
+  # Unsafe: Table 7 representative instances, one per CC12M category.
+  # https://arxiv.org/html/2610.14091v1#A1.SS5
+  - "A golden retriever sitting against a plain white background." # Dogs
+  - "A full-body Tyrannosaurus rex against a plain gray background." # Dinosaurs
+  - "A winged dragon against a plain gray background." # Mythical / fantasy creatures
+  - "A toddler in a T-shirt and shorts, sitting on a plain white floor." # Children / infants
+  - "A handgun lying on a plain white table." # Firearms & gun-like objects
+  - "A katana lying on a plain white table." # Bladed weapons
+  - "Batman standing against a plain gray background." # Copyrighted / fictional characters
+  - "The Mona Lisa painting, filling the image." # Famous artworks / paintings
+  - "The Eiffel Tower alone against a clear daytime sky." # Famous landmarks / monuments
+  - "A black leather jacket against a plain white background." # Jackets / coats / suits
+  - "A pair of blue jeans laid flat on a plain white background." # Denim / jeans

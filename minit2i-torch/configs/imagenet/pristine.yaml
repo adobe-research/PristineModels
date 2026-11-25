@@ -1,0 +1,83 @@
+project: minit2i-imagenet
+wandb_entity: null
+run_name: mmdit-b32-imagenet-pristine-v2
+# Must be on shared storage that survives restarts, or auto-resume starts from step 0.
+output_dir: ${T2I_OUTPUT_ROOT}/mmdit_b32_imagenet_pristine-v2
+
+dataset_backend: imagenet_pristine
+imagenet_captions_dir: ${T2I_IMAGENET_CAPTIONS_ROOT}/explicit/decomposed_prompts/train
+imagenet_val_captions_dir: ${T2I_IMAGENET_CAPTIONS_ROOT}/explicit/decomposed_prompts/val
+imagenet_image_dir: ${T2I_IMAGENET_PARQUET_ROOT}
+imagenet_setting_labels_path: ${T2I_IMAGENET_CAPTIONS_ROOT}/settings/Dog/imagenet_dog_setting_labels.json
+imagenet_leakage_path: ${T2I_IMAGENET_CAPTIONS_ROOT}/settings/Dog/leakage_merged.json
+
+# subject_caption feeds the mode stream, residual_caption the shared stream.
+sample_prompts:
+  - '{"subject_caption": "A Chihuahua.", "residual_caption": "The object sits alert on a sunlit patio."}'
+  - '{"subject_caption": "A Shih-Tzu.", "residual_caption": "The object looks up from a living-room rug."}'
+  - '{"subject_caption": "A golden retriever.", "residual_caption": "The object runs along a beach, wet sand and shallow surf behind it."}'
+  - '{"subject_caption": "A small Maltese dog.", "residual_caption": "The object is sculpted from smooth white ceramic, displayed on a wooden shelf under soft studio lighting."}'
+  - '{"subject_caption": "A Groenendael with a thick coat.", "residual_caption": "The object is moulded from dark chocolate, resting on a sheet of white parchment paper on a marble countertop."}'
+  - '{"subject_caption": "A Blenheim Spaniel.", "residual_caption": "The object is shaped from pale yellow cheddar cheese, sitting on a wooden cutting board beside scattered crackers."}'
+  - '{"subject_caption": "A Staffordshire bull terrier.", "residual_caption": "The object is cast in weathered bronze, mounted on a stone pedestal in a sunlit public square."}'
+  - '{"subject_caption": "Bright orange goldfish.", "residual_caption": "The objects drift among feathery plants in a clear glass aquarium."}'
+  - '{"subject_caption": "A great white shark.", "residual_caption": "The object glides through deep blue open ocean, sunlight on its back."}'
+  - '{"subject_caption": "A red rooster with bright comb and wattles.", "residual_caption": "The object stands in straw dust, barn boards behind."}'
+  - '{"subject_caption": "An arctic fox with a thick white winter coat.", "residual_caption": "The object trots across a flat snowfield under a pale grey sky, leaving small prints behind it."}'
+  - '{"subject_caption": "A hammerhead shark.", "residual_caption": "The object is sculpted from pale marble, displayed in a museum alcove under directed spotlights."}'
+  - '{"subject_caption": "A stingray.", "residual_caption": "The object is formed from translucent blue glass, resting on a white plinth in a gallery."}'
+
+image_size: 512
+prompt_length: 256
+num_workers: 2
+dataloader_prefetch: 2
+
+t5_name: google/flan-t5-large
+patch_size: 32
+hidden_size: 768
+text_hidden_size: 768
+t5_hidden_size: 1024
+depth_double: 17
+text_preamble_depth: 2
+num_heads: 12
+head_dim: 64
+pca_channels: 128
+attention_impl: sdpa
+compile_model: true
+
+batch_size: 1024
+micro_batch_size: 32
+grad_accum_steps: 1
+num_steps: 250000
+warmup_steps: 5000
+learning_rate: 0.0004
+adam_beta2: 0.95
+weight_decay: 0.0
+max_grad_norm: 0.0
+amp_dtype: bf16
+
+prediction: x
+t_sample_schedule: lognorm
+t_lognorm_mu: -0.8
+t_lognorm_sigma: 0.8
+label_drop_rate: 0.1
+noise_scale: 2.0
+n_T: 200
+cfg_scale: 3.0
+
+log_every: 100
+latest_every: 500
+log_images_every: 1000
+sample_every: 10000
+# Numbered checkpoints every ckpt_every (all kept); checkpoint_latest.pt overwritten every latest_every for resume.
+ckpt_every: 10000
+save_keep: 0
+val_every: 6000
+val_metric: fid
+val_fid_manifest: ${T2I_IMAGENET_CAPTIONS_ROOT}/settings/Dog/equalized_val.jsonl
+val_fid_sources: [v1, v2]
+val_fid_dir: ${T2I_OUTPUT_ROOT}/val_fid_tmp
+val_fid_v1_real_dir: ${T2I_IMAGENET_PARQUET_ROOT}
+val_fid_v2_real_dir: ${T2I_DATA_ROOT}/imagenet/v2/data
+val_fid_batch_size: 64
+auto_resume: true

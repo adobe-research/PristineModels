@@ -1,0 +1,81 @@
+project: minit2i-imagenet
+wandb_entity: null
+run_name: mmdit-b32-imagenet-full
+# Must be on shared storage that survives restarts, or auto-resume starts from step 0.
+output_dir: ${T2I_OUTPUT_ROOT}/mmdit_b32_imagenet_full
+
+dataset_backend: imagenet
+imagenet_captions_dir: ${T2I_IMAGENET_CAPTIONS_ROOT}/explicit/whole_prompts/train
+imagenet_val_captions_dir: ${T2I_IMAGENET_CAPTIONS_ROOT}/explicit/whole_prompts/val
+imagenet_image_dir: ${T2I_IMAGENET_PARQUET_ROOT}
+
+image_size: 512
+prompt_length: 256
+num_workers: 2
+dataloader_prefetch: 2
+
+t5_name: google/flan-t5-large
+patch_size: 32
+hidden_size: 768
+text_hidden_size: 768
+t5_hidden_size: 1024
+depth_double: 17
+text_preamble_depth: 2
+num_heads: 12
+head_dim: 64
+pca_channels: 128
+attention_impl: sdpa
+
+batch_size: 1024
+micro_batch_size: 32
+grad_accum_steps: 1
+num_steps: 250000
+warmup_steps: 5000
+learning_rate: 0.0004
+adam_beta2: 0.95
+weight_decay: 0.0
+max_grad_norm: 0.0
+amp_dtype: bf16
+
+prediction: x
+t_sample_schedule: lognorm
+t_lognorm_mu: -0.8
+t_lognorm_sigma: 0.8
+label_drop_rate: 0.1
+noise_scale: 2.0
+n_T: 100
+cfg_scale: 2.0
+
+log_every: 100
+log_images_every: 1000
+sample_every: 10000
+val_every: 10000
+# FID uses the same safe-group v1/v2 manifest as Pristine.
+val_metric: fid
+val_fid_manifest: ${T2I_IMAGENET_CAPTIONS_ROOT}/settings/Dog/equalized_val.jsonl
+val_fid_sources: [v1, v2]
+val_fid_dir: ${T2I_OUTPUT_ROOT}/val_fid_tmp
+val_fid_v1_real_dir: ${T2I_IMAGENET_PARQUET_ROOT}
+val_fid_v2_real_dir: ${T2I_DATA_ROOT}/imagenet/v2/data
+val_fid_batch_size: 64
+# Numbered checkpoints every ckpt_every (all kept); checkpoint_latest.pt overwritten every latest_every for resume.
+ckpt_every: 20000
+latest_every: 500
+save_keep: 0
+auto_resume: true
+
+sample_prompts:
+  - "Bright orange goldfish drift among feathery plants in a clear glass aquarium."
+  - "A great white shark glides through deep blue open ocean, sunlight on its back."
+  - "A tiger shark cruises over pale sand with dappled light from the surface above."
+  - "A hammerhead shark moves through turquoise water near a dark reef edge."
+  - "An electric ray rests half-buried in pale sand, mottled disk flat on the seafloor."
+  - "A stingray undulates over shallow tropical water, rippled sand visible below."
+  - "A red rooster stands in straw dust, bright comb and wattles, barn boards behind."
+  - "A Chihuahua sits alert on a sunlit patio, compact body and large dark eyes."
+  - "A Japanese spaniel with white and orange markings rests on a soft cushion indoors."
+  - "A small Maltese dog with long silky white fur stands on a clipped green lawn."
+  - "A Pekingese with a flat face and abundant coat poses on a plush chair."
+  - "A Shih-Tzu with a tied topknot and flowing coat looks up from a living-room rug."
+  - "A Blenheim spaniel with chestnut patches on white lies on a braided rug by a window."
+  - "A papillon with large erect fringed ears perches attentively on someone's lap."
